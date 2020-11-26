@@ -5,7 +5,10 @@ const controller = require('../controllers/api');
 router.post("/user", controller.signUp);
 
 // 대화 리스트 조회
+router.get("/chat", controller.chatList);
+
 // 대화 입력
+router.post("/chat", controller.chatAdd);
 
 // 돌보미 일정 조회
 router.get("/elder/calendar", controller.calendarElderDetail);

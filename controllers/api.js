@@ -49,6 +49,82 @@ exports.signUp = async function (req, res) {
     }
 }
 
+exports.chatAdd = async function (req, res) {
+    const { user_idx, state, voice_url } = req.body;
+
+
+
+    if (!user_idx) return res.json({ isSuccess: false, code: 301, message: "모든내용을 입력해주세요." });
+
+    try {
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+
+            const insertChatQuery = `
+                INSERT INTO
+                chat(user_idx, state, voice_url)
+                VALUES (?, ?, ?);
+                `;
+
+            let insertChatParams = [user_idx, state, voice_url];
+
+            const row = await connection.query(insertChatQuery, insertChatParams);
+
+            connection.release();
+
+            return res.json({
+                isSuccess: true,
+                code: 200,
+                message: "대화 입력 성공"
+            });
+
+        } catch (err) {
+            connection.release();
+            logger.error(`공통 - 회원가입 Query error\n: ${err.message}`);
+            return res.status(500).send(`Error: ${err.message}`);
+        }
+    } catch (err) {
+        logger.error(`공통 - 회원가입 DB Connection error\n: ${err.message}`);
+        return res.status(500).send(`Error: ${err.message}`);
+    }
+}
+
+exports.chatList = async function (req, res) {
+
+    try {
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+
+            const selectChatQuery = `
+                    SELECT c.idx, c.user_idx, u.name, u.phone, c.state, c.voice_url, c.created_at
+                    FROM chat as c
+                    INNER JOIN
+                    user u on c.user_idx = u.idx
+                    ORDER BY c.created_at DESC;
+                `;
+
+            const [chatRows] = await connection.query(selectChatQuery);
+
+            connection.release();
+
+            return res.json({
+                result: chatRows,
+                isSuccess: true,
+                code: 200,
+                message: "대화 리스트 조회 성공"
+            });
+
+        } catch (err) {
+            connection.release();
+            logger.error(`공통 - 회원가입 Query error\n: ${err.message}`);
+            return res.status(500).send(`Error: ${err.message}`);
+        }
+    } catch (err) {
+        logger.error(`공통 - 회원가입 DB Connection error\n: ${err.message}`);
+        return res.status(500).send(`Error: ${err.message}`);
+    }
+}
+
 /// 어르신 api
 exports.calendarElderDetail = async function (req, res) {
 
