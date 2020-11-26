@@ -1,6 +1,8 @@
 const { pool } = require('../config/database');
 const { logger } = require('../config/winston');
 
+const axios = require('axios');
+
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const secret_config = require('../config/secret');
@@ -376,6 +378,25 @@ exports.locationList = async function (req, res) {
 
 
             const [locationRows] = await connection.query(selectLocationQuery);
+
+            let address;
+
+            for (let i = 0; i < locationRows.length; i++) {
+
+                await axios({
+                    method: 'get',
+                    url: 'https://dapi.kakao.com/v2/local/geo/coord2address.json?x=' + locationRows[i].longitude + '&y=' + locationRows[i].latitude,
+                    headers: {
+                        'Authorization': 'KakaoAK ' + 'be505fd593fff238a8109cf15922e92f'
+                    }
+                })
+                    .then(function (response) {
+                        address = response.data.documents[0].address.address_name;
+                    });
+
+                locationRows[i].address = address;
+
+            }
 
             connection.release();
 

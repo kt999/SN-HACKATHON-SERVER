@@ -2,6 +2,7 @@
   "name": "ci_project",
   "version": "1.0.0",
   "dependencies": {
+    "axios": "^0.21.0",
     "body-parser": "^1.19.0",
     "cookie": "^0.4.1",
     "cookie-parser": "^1.4.5",
