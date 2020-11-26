@@ -36,6 +36,8 @@ router.get("/manager/state", controller.stateList);
 // 어르신 위치 리스트 조회
 router.get("/manager/location", controller.locationList);
 
+// 어르신 정보 리스트 조회
+router.get("/manager/user", controller.userList);
 
 
 module.exports = router;

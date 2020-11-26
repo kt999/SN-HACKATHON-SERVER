@@ -417,3 +417,40 @@ exports.locationList = async function (req, res) {
         return res.status(500).send(`Error: ${err.message}`);
     }
 }
+
+exports.userList = async function (req, res) {
+
+
+    try {
+        const connection = await pool.getConnection(async conn => conn);
+        try {
+
+            const selectUserQuery = `
+                    SELECT *
+                    FROM user
+                    WHERE type = 'ELDER';
+                `;
+
+            const [userRows] = await connection.query(selectUserQuery);
+
+
+            connection.release();
+
+            return res.json({
+                result: userRows,
+                isSuccess: true,
+                code: 200,
+                message: "어르신 정보 리스트 조회"
+            });
+
+        } catch (err) {
+            connection.release();
+            logger.error(`돌보미 - 어르신 상태 리스트 조회 Query error\n: ${err.message}`);
+            return res.status(500).send(`Error: ${err.message}`);
+        }
+    } catch (err) {
+        logger.error(`돌보미 - 어르신 상태 리스트 조회 DB Connection error\n: ${err.message}`);
+        return res.status(500).send(`Error: ${err.message}`);
+    }
+}
+
