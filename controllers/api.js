@@ -406,6 +406,10 @@ exports.stateList = async function (req, res) {
 
             let resultRows = [];
             for (let i = 0; i < elderRows.length; i++) {
+
+                if (resultRows.length >= 4) {
+                    break;
+                }
                 selectStateParams = [elderRows[i].idx];
 
                 [stateRows] = await connection.query(selectStateQuery, selectStateParams);
