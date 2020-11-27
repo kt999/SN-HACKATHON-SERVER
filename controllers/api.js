@@ -52,8 +52,6 @@ exports.signUp = async function (req, res) {
 exports.chatAdd = async function (req, res) {
     const { user_idx, state, voice_url } = req.body;
 
-
-
     if (!user_idx) return res.json({ isSuccess: false, code: 301, message: "모든내용을 입력해주세요." });
 
     try {
@@ -467,7 +465,12 @@ exports.locationList = async function (req, res) {
                     }
                 })
                     .then(function (response) {
-                        address = response.data.documents[0].address.address_name;
+                        if (response.data.meta.total_count != 0) {
+                            address = response.data.documents[0].address.address_name;
+                        }
+                        else {
+                            address = "";
+                        }
                     });
 
                 locationRows[i].address = address;
